@@ -7,5 +7,7 @@
     <item android:title="Give Item"
         android:id="@+id/give"
         android:icon="@drawable/ic_baseline_local_offer_24"/>
-
+    <item android:id="@+id/profile"
+        android:icon="@drawable/common_full_open_on_phone"
+        android:title="Profile" />
 </menu>

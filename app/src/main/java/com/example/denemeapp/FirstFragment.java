@@ -11,7 +11,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.denemeapp.databinding.FragmentFirstBinding;
 
-public class FirstFragment extends Fragment {
+public class  FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
 
