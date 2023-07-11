@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(binding.getRoot());
         replaceFragment(new TakeFragment());
-        binding.boottomNavigationView.setOnItemSelectedListener(item -> {
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 
         switch (item.getItemId()){
 

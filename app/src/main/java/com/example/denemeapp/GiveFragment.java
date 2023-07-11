@@ -4,13 +4,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultCaller;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -18,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -29,9 +26,20 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.denemeapp.databinding.FragmentGiveBinding;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
-import javax.xml.transform.Result;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,6 +48,10 @@ import javax.xml.transform.Result;
  */
 public class GiveFragment extends Fragment {
 
+    private FirebaseStorage firebaseStorage ;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore firebaseFirestore;
+    private StorageReference storageReference;
     FragmentGiveBinding binding;
     Uri imageData;
     ActivityResultLauncher<Intent> activityResultLauncher;
@@ -87,6 +99,12 @@ public class GiveFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
+        firebaseStorage = FirebaseStorage.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        storageReference = firebaseStorage.getReference();
     }
 
 
@@ -102,34 +120,85 @@ public class GiveFragment extends Fragment {
     }
 
 
+
+
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button button = view.findViewById(R.id.button);
+        Button button = view.findViewById(R.id.btn_setData);
         ImageView imageView = view.findViewById(R.id.setImageView);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setData(view);
-            }
-        });
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 setImage(view);
+            }
+        });
+
+
+            button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // push tuşuna basınca firebase e verileri kaydeden fonksiyon
+                if(imageData!= null){
+                    UUID uuid = UUID.randomUUID();
+                    String imageName = "images/" + uuid + ".png";
+
+                    storageReference.child(imageName).child("image.jpg").putFile(imageData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // Download url alma
+                                StorageReference newStorageReference = firebaseStorage.getReference(imageName);
+                                newStorageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String downloadUrl = uri.toString();
+                                    String tittle = binding.edtexTittle.getText().toString();
+                                    String description = binding.edtexDescription.getText().toString();
+                                    // salary string olarak tutuluyo hatalı
+                                    String salary = binding.edtexSalary.getText().toString();
+                                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                                    String email = user.getEmail();
+
+                                    HashMap<String,Object> postData = new HashMap<>();
+                                    postData.put("title",tittle);
+                                    postData.put("description",description);
+                                    postData.put("salary",salary);
+                                    postData.put("downloadurl",downloadUrl);
+                                    postData.put("email",email);
+                                    postData.put("date", FieldValue.serverTimestamp());
+
+                                    firebaseFirestore.collection("Post").add(postData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+
+
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(getContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            });
+
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
         });
     }
 
-
-
-
-
- // push tuşuna basınca firebase e verileri kaydeden fonksiyon
-    public void setData(View view){
-
-    }
 
     private void registerLauncher(){
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -145,11 +214,9 @@ public class GiveFragment extends Fragment {
 
                         }
                     }
+
             }
         });
-
-
-
 
         permissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
             @Override
@@ -191,4 +258,5 @@ public class GiveFragment extends Fragment {
         }
 
     }
+
 }

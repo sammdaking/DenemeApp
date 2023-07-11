@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/take"
         android:icon="@drawable/ic_baseline_fingerprint_24"
-        android:title="Take Item" />
+        android:title="Take Item"
+        />
+
     <item android:title="Give Item"
         android:id="@+id/give"
         android:icon="@drawable/ic_baseline_local_offer_24"/>
-    <item android:id="@+id/profile"
-        android:icon="@drawable/common_full_open_on_phone"
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_baseline_person_add_alt_1_24"
         android:title="Profile" />
 </menu>
