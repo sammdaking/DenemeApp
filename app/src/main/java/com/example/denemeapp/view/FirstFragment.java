@@ -1,4 +1,4 @@
-package com.example.denemeapp;
+package com.example.denemeapp.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.denemeapp.R;
 import com.example.denemeapp.databinding.FragmentFirstBinding;
 
 public class  FirstFragment extends Fragment {

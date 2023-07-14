@@ -1,4 +1,4 @@
-package com.example.denemeapp;
+package com.example.denemeapp.view;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;

@@ -1,9 +1,11 @@
-package com.example.denemeapp;
+package com.example.denemeapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.example.denemeapp.R;
 
 public class SplashScreen extends AppCompatActivity {
 

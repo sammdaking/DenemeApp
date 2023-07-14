@@ -7,7 +7,16 @@
 
     <fragment
         android:id="@+id/giveFragment"
-        android:name="com.example.denemeapp.GiveFragment"
+        android:name="com.example.denemeapp.view.GiveFragment"
         android:label="fragment_give"
-        tools:layout="@layout/fragment_give" />
+        tools:layout="@layout/fragment_give" >
+        <action
+            android:id="@+id/action_giveFragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.example.denemeapp.view.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
 </navigation>

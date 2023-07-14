@@ -1,4 +1,6 @@
-package com.example.denemeapp;
+package com.example.denemeapp.view;
+
+import static android.content.ContentValues.TAG;
 
 import android.Manifest;
 import android.app.Activity;
@@ -16,8 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,20 +29,31 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.denemeapp.R;
 import com.example.denemeapp.databinding.FragmentGiveBinding;
+import com.example.denemeapp.databinding.FragmentTakeBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -47,12 +62,15 @@ import java.util.UUID;
  * create an instance of this fragment.
  */
 public class GiveFragment extends Fragment {
-
+    ArrayList<Post> postArrayList;
     private FirebaseStorage firebaseStorage ;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
     private StorageReference storageReference;
-    FragmentGiveBinding binding;
+    PostAdapter postAdapter;
+
+
+    private FragmentGiveBinding binding;
     Uri imageData;
     ActivityResultLauncher<Intent> activityResultLauncher;
     ActivityResultLauncher<String> permissionLauncher;
@@ -93,18 +111,60 @@ public class GiveFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         registerLauncher();
-
+        postArrayList = new ArrayList<>();
+        postAdapter =new PostAdapter(postArrayList);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+ //       binding = FragmentGiveBinding.inflate(getLayoutInflater());
+   //     View view = binding.getRoot();
+
+
 
         firebaseStorage = FirebaseStorage.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
         storageReference = firebaseStorage.getReference();
+        getData();
+
+    }
+
+    private void getData() {
+
+        firebaseFirestore.collection("Post").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if(error != null){
+
+                        Toast.makeText(getContext(),error.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+
+                    }
+
+
+                    if (value != null){
+                        for( DocumentSnapshot snapshot : value.getDocuments()){
+                            Map<String,Object> data = snapshot.getData();
+                            String description = (String) data.get("description");
+                            String downloadurl = (String) data.get("downloadurl");
+                            String email = (String) data.get("email");
+                            String salary = (String) data.get("salary");
+                            String title = (String) data.get("title");
+                            Post post = new Post(description,downloadurl,email,salary,title);
+                            postArrayList.add(post);
+
+
+                        }
+
+                        postAdapter.notifyDataSetChanged();
+
+                    }
+            }
+        });
+
+
     }
 
 
@@ -115,8 +175,9 @@ public class GiveFragment extends Fragment {
         binding = FragmentGiveBinding.inflate(inflater,container,false);
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_give, container, false);
-
         return binding.getRoot();
+
+
     }
 
 
@@ -146,7 +207,7 @@ public class GiveFragment extends Fragment {
                     UUID uuid = UUID.randomUUID();
                     String imageName = "images/" + uuid + ".png";
 
-                    storageReference.child(imageName).child("image.jpg").putFile(imageData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    storageReference.child(imageName).putFile(imageData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             // Download url alma
@@ -170,9 +231,12 @@ public class GiveFragment extends Fragment {
                                     postData.put("email",email);
                                     postData.put("date", FieldValue.serverTimestamp());
 
+
+
                                     firebaseFirestore.collection("Post").add(postData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                         @Override
                                         public void onSuccess(DocumentReference documentReference) {
+                                            Toast.makeText(getContext(),"Added Data on Firebase",Toast.LENGTH_SHORT).show();
 
 
 
@@ -195,10 +259,41 @@ public class GiveFragment extends Fragment {
                         }
                     });
                 }
+
+                //    DocumentReference documentReference = firebaseFirestore.collection("Post").document();
+
+
+                DocumentReference docRef = firebaseFirestore.collection("cities").document("SF");
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                            } else {
+                                Log.d(TAG, "No such document");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
+
             }
         });
+
+
+
+
+
     }
 
+   // private  void getData{
+
+
+
+    //}
 
     private void registerLauncher(){
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {

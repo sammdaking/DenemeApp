@@ -1,4 +1,4 @@
-package com.example.denemeapp;
+package com.example.denemeapp.view;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -10,7 +10,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
+
+import com.example.denemeapp.R;
 import com.example.denemeapp.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
 

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "820596716376",
+    "project_id": "social-solidarity-fe7a0",
+    "storage_bucket": "social-solidarity-fe7a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820596716376:android:fb69545b0e8cb63de72b2d",
+        "android_client_info": {
+          "package_name": "com.example.denemeapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "820596716376-qurjr0j81abk8f2nnl74mcd29fl2bf2b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.denemeapp",
+            "certificate_hash": "510ca60092a01f9fa5dc0339a49ce04490f45174"
+          }
+        },
+        {
+          "client_id": "820596716376-c5vubbs2junum7046l4uer5o8pbqt49f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5oorYW0IIhUIvbh5GJ38Ip-D7MIAUPNI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820596716376-c5vubbs2junum7046l4uer5o8pbqt49f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SplashScreen"
+    tools:context=".view.SplashScreen"
     android:gravity="center"
     android:orientation="vertical">
     <TextView
@@ -13,7 +13,7 @@
         android:layout_width="241dp"
         android:layout_height="120dp"
         android:layout_marginTop="60dp"
-        android:text="SOCIAL SOLIDARITY"
+        android:text="TOPYEKÜN"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

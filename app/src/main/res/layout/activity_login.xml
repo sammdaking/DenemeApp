@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#C1F3EE"
-    tools:context=".LoginActivity">
+    android:background="@drawable/foto1"
+    tools:context=".view.LoginActivity">
 
     <EditText
         android:id="@+id/editTextText_userName"
@@ -49,7 +49,7 @@
         app:layout_constraintHorizontal_bias="0.462"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@drawable/login" />
 
     <Button
         android:id="@+id/btn_login"
@@ -84,6 +84,7 @@
         android:layout_width="119dp"
         android:layout_height="72dp"
         android:layout_marginTop="28dp"
+        android:background="@color/teal_200"
         android:onClick="goSignUp"
         android:text="Sign Up"
         app:layout_constraintEnd_toEndOf="parent"
